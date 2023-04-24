@@ -47,7 +47,7 @@ spec:
             failureThreshold: 2
           {{- if .Values.env }}
           env:
-          {{- include "env" .Values | nindent 10}}
+            {{- include "env" .Values | nindent 12}}
           {{- end }}
           {{- if .Values.envFrom }}
           envFrom:
@@ -59,5 +59,5 @@ spec:
           {{- end }}
       {{- if .Values.volumes }}
       volumes:
-        {{- include "volumeMounts" .Values | nindent 8}}
+        {{- include "volumeMount" .Values | nindent 8}}
       {{- end }}
