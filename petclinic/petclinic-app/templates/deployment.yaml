@@ -55,19 +55,9 @@ spec:
           {{- end }}
           {{- if .Values.volumeMounts }}
           volumeMounts:
-            - name: app-logs
-              mountPath: /opt/devops/logs
-            - name: logback-spring-config
-              mountPath: /opt/devops/config/logback-spring.xml
-              subPath: logback-spring.xml
-            - name: application-properties-config
-              mountPath: /opt/devops/config/application.properties
-              subPath: application.properties
+            {{- include "env" .Values | nindent 12}}
           {{- end }}
       {{- if .Values.volumes }}
       volumes:
-        {{- range $k, $v := $.Values.volumes }}
-        - name: {{ $k }}
-          {{- toYaml $v | nindent 10 }}
-        {{- end}}
+        {{- include "env" .Values | nindent 8}}
       {{- end }}
