@@ -30,7 +30,7 @@ volumeMounts:
   - name: application-properties-config
     mountPath: /opt/devops/config/application.properties
     subPath: application.properties
-volume:
+volumes:
   - name: app-logs
     hostPath:
       path: /logs
