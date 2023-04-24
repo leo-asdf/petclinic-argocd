@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: petclinic
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: petclinic
+    spec:
+      containers:
+        - name: petclinic
+          image: syl1709/petclinic:3.0.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 2
+          envFrom:
+            - configMapRef:
+                name: petclinic-env-config
+          volumeMounts:
+            - name: app-logs
+              mountPath: /opt/devops/logs
+            - name: logback-spring-config
+              mountPath: /opt/devops/config/logback-spring.xml
+              subPath: logback-spring.xml
+            - name: application-properties-config
+              mountPath: /opt/devops/config/application.properties
+              subPath: application.properties
+      volumes:
+        - name: app-logs
+          hostPath:
+            path: /logs
+            type: Directory
+        - name: logback-spring-config
+          configMap:
+            name: petclinic-logback-spring-config
+            items:
+              - key: logback-spring.xml
+                path: logback-spring.xml
+        - name: application-properties-config
+          configMap:
+            name: petclinic-application-propeties-config
+            items:
+              - key: application.properties
+                path: application.properties
+      terminationGracePeriodSeconds: 30
