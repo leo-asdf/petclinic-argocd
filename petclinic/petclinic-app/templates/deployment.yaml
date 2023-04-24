@@ -67,7 +67,7 @@ spec:
       {{- if .Values.volumes }}
       volumes:
         {{- range $k, $v := $.Values.volumes }}
-        - name: {{ $k | nindent 8 }}
+        - name: {{ $k }}
           {{- toYaml $v | nindent 10 }}
         {{- end}}
       {{- end }}
