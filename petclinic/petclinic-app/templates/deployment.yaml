@@ -26,8 +26,9 @@ spec:
             - containerPort: {{ .Values.containerPort }}
           {{- if .Values.startupProbe }}
           startupProbe:
-            {{- $_ := set .Values "probeType" "startupProbe" -}}
-            {{- include "probe" . | indent 12 }}
+            {{- with .Values.startupProbe }}
+            {{ toYaml . | nindent 12}}
+            {{- end }}
           {{- end }}
           {{- if .Values.livenessProbe }}
           livenessProbe:
