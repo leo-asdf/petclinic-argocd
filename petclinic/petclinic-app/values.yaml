@@ -1,27 +1,17 @@
-replicas: 2
+replicaCount: 2
 
 image:
   repository: syl1709/petclinic
   tag: 3.0.1
   pullPolicy: IfNotPresent
 
-probe:
-  initialDelaySeconds: 10
-  periodSeconds: 30
-  failureThreshold: 5
+rollingUpdate:
+  maxSurge: 100%
+  maxUnavailable: 0
 
-logsPath: /logs
+containerPort: 8080
+healthPort: 8080
 
-volumes:
-  - name: app-logs
-    hostPath:
-      path: /logs
-      type: Directory
-  - name: logback-spring-config
-    configMap:
-      name: petclinic-logback-spring-config
-      key: logback-spring.xml
-  - name: application-properties-config
-    configMap:
-      name: petclinic-application-propeties-config
-      key: application.properties
+envFrom:
+  - configMapRef:
+      name: petclinic-env-config

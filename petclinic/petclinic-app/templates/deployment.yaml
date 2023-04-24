@@ -3,15 +3,15 @@ kind: Deployment
 metadata:
   name: petclinic
 spec:
-  replicas: {{ .Values.replicas }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: petclinic
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 100%
-      maxUnavailable: 0
+      maxSurge: {{ .Values.maxSurge }}
+      maxUnavailable: {{ .Values.maxUnavailable }}
   template:
     metadata:
       labels:
@@ -19,46 +19,63 @@ spec:
     spec:
       containers:
         - name: petclinic
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: syl1709/petclinic:3.0.1
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
+            - containerPort: {{ .Values.containerPort }}
           startupProbe:
             httpGet:
               path: /health
-              port: 8080
-            initialDelaySeconds: {{ .Values.probe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.probe.periodSeconds }}
-            failureThreshold: {{ .Values.probe.failureThreshold }}
+              port: {{ .Values.healthPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            failureThreshold: 5
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
-            initialDelaySeconds: {{ .Values.probe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.probe.periodSeconds }}
-            failureThreshold: {{ .Values.probe.failureThreshold }}
+              port: {{ .Values.healthPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /health
-              port: 8080
-            initialDelaySeconds: {{ .Values.probe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.probe.periodSeconds }}
-            failureThreshold: {{ .Values.probe.failureThreshold }}
+              port: {{ .Values.healthPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 2
+          {{- if .Values.env }}
+          env:
+          {{- include "env" .Values | nindent 10}}
+          {{- end }}
+          {{- if .Values.envFrom }}
           envFrom:
-            - configMapRef:
-                name: petclinic-env-config
+            {{- toYaml .Values.envFrom | nindent 12}}
+          {{- end }}
           volumeMounts:
             - name: app-logs
-              mountPath: {{ .Values.logsPath }}
+              mountPath: /opt/devops/logs
             - name: logback-spring-config
               mountPath: /opt/devops/config/logback-spring.xml
-              subPath: {{ .Values.config.logbackSpring.key }}
+              subPath: logback-spring.xml
             - name: application-properties-config
               mountPath: /opt/devops/config/application.properties
-              subPath: {{ .Values.config.applicationProperties.key }}
+              subPath: application.properties
       volumes:
-        {{- range $k, $v := .Values.volumes}}
-        - name {{ $k }}
-          {{- toYaml $v | nindent 10 }}
-        {{- end}}
+        - name: app-logs
+          hostPath:
+            path: /logs
+            type: Directory
+        - name: logback-spring-config
+          configMap:
+            name: petclinic-logback-spring-config
+            items:
+              - key: logback-spring.xml
+                path: logback-spring.xml
+        - name: application-properties-config
+          configMap:
+            name: petclinic-application-propeties-config
+            items:
+              - key: application.properties
+                path: application.properties
       terminationGracePeriodSeconds: 30
