@@ -39,9 +39,9 @@ readinessProbe:
 env:
   JAVA_OPTIONS: "-Dlogging.config=/opt/devops/config/logback-spring.xml"
 
-envFrom:
-  - configMapRef:
-      name: petclinic-env-config
+# envFrom:
+#   - configMapRef:
+#       name: petclinic-env-config
 
 volumeMounts:
   - name: app-logs
