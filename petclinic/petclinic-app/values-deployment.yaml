@@ -46,10 +46,10 @@ envFrom:
 volumeMounts:
   - name: app-logs
     mountPath: /opt/devops/logs
-  - name: logback-spring-config
+  - name: petclinic-data-config
     mountPath: /opt/devops/config/logback-spring.xml
     subPath: logback-spring.xml
-  - name: application-properties-config
+  - name: petclinic-data-config
     mountPath: /opt/devops/config/application.properties
     subPath: application.properties
 volumes:
@@ -57,16 +57,12 @@ volumes:
     hostPath:
       path: /logs
       type: Directory
-  - name: petclinic
+  - name: petclinic-data-config
     configMap:
-      name: petclinic-logback-spring-config
+      name: petclinic-data-config
       items:
         - key: logback-spring.xml
           path: logback-spring.xml
-  - name: petclinic
-    configMap:
-      name: petclinic-application-propeties-config
-      items:
         - key: application.properties
           path: application.properties
 # Optional - End
