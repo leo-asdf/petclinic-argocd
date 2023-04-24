@@ -12,7 +12,30 @@ rollingUpdate:
   maxUnavailable: 0
 
 containerPort: 8080
-healthPort: 8080
+
+healthPath: /health
+
+startupProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 30
+  failureThreshold: 5
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 3
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 2
 
 env:
   JAVA_OPTIONS: ""

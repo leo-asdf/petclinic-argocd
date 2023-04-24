@@ -24,27 +24,21 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: {{ .Values.containerPort }}
+          {{- if .Values.startupProbe }}
           startupProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.healthPort }}
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            failureThreshold: 5
+            {{- $_ := set .Values "probeType" "startupProbe" -}}
+            {{- include "probe" . | indent 12 }}
+          {{- end }}
+          {{- if .Values.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.healthPort }}
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            failureThreshold: 3
+            {{- $_ := set .Values "probeType" "livenessProbe" -}}
+            {{- include "probe" . | indent 12 }}
+          {{- end }}
+          {{- if .Values.readinessProbe }}
           readinessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.healthPort }}
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            failureThreshold: 2
+            {{- $_ := set .Values "probeType" "readinessProbe" -}}
+            {{- include "probe" . | indent 12 }}
+          {{- end }}
           {{- if .Values.env }}
           env:
             {{- include "env" .Values | nindent 12}}
