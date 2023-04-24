@@ -36,7 +36,8 @@ readinessProbe:
   periodSeconds: 10
   failureThreshold: 2
 
-env: []
+env:
+  JAVA_OPTIONS: "-Dlogging.config=/opt/devops/config/logback-spring.xml"
 
 envFrom:
   - configMapRef:
