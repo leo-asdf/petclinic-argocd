@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: petclinic
 spec:
-  replicas: 2
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: petclinic
@@ -19,58 +19,45 @@ spec:
     spec:
       containers:
         - name: petclinic
-          image: syl1709/petclinic:3.0.1
-          imagePullPolicy: IfNotPresent
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080
           startupProbe:
             httpGet:
               path: /health
               port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            failureThreshold: 5
+            initialDelaySeconds: {{ .Values.probe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.failureThreshold }}
           livenessProbe:
             httpGet:
               path: /health
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            failureThreshold: 3
+            initialDelaySeconds: {{ .Values.probe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.failureThreshold }}
           readinessProbe:
             httpGet:
               path: /health
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            failureThreshold: 2
+            initialDelaySeconds: {{ .Values.probe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probe.periodSeconds }}
+            failureThreshold: {{ .Values.probe.failureThreshold }}
           envFrom:
             - configMapRef:
                 name: petclinic-env-config
           volumeMounts:
             - name: app-logs
-              mountPath: /opt/devops/logs
+              mountPath: {{ .Values.logsPath }}
             - name: logback-spring-config
               mountPath: /opt/devops/config/logback-spring.xml
-              subPath: logback-spring.xml
+              subPath: {{ .Values.config.logbackSpring.key }}
             - name: application-properties-config
               mountPath: /opt/devops/config/application.properties
-              subPath: application.properties
+              subPath: {{ .Values.config.applicationProperties.key }}
       volumes:
-        - name: app-logs
-          hostPath:
-            path: /logs
-            type: Directory
-        - name: logback-spring-config
-          configMap:
-            name: petclinic-logback-spring-config
-            items:
-              - key: logback-spring.xml
-                path: logback-spring.xml
-        - name: application-properties-config
-          configMap:
-            name: petclinic-application-propeties-config
-            items:
-              - key: application.properties
-                path: application.properties
+        {{- range $k, $v := .Values.volumes}}
+        - name {{ $k }}
+        {{- toYaml $v | nindent 8 }}
       terminationGracePeriodSeconds: 30
