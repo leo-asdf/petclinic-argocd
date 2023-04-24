@@ -1,0 +1,55 @@
+configMapCreate: true
+configMapData:
+  JAVA_OPTIONS: "-Dlogging.config=/opt/devops/config/logback-spring.xml"
+  logback-spring.xml: |-
+    <configuration>
+
+        <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>/opt/devops/logs/petclinic.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>/opt/devops/logs/petclinic.%d{yyyy-MM-dd-HH-mm-ss}.log</fileNamePattern>
+                <maxHistory>30</maxHistory>
+                <totalSizeCap>50MB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <root level="info">
+            <appender-ref ref="Console" />
+            <appender-ref ref="RollingFile" />
+        </root>
+
+    </configuration>
+  application.properties: |-
+    # database init
+    spring.datasource.url=jdbc:mysql://mysql.default.svc.cluster.local:3306/petclinic?useSSL=false&allowPublicKeyRetrieval=true
+    spring.datasource.username=root
+    spring.datasource.password=petclinic
+
+    # do not attempt to replace database with in-memory database
+    spring.test.database.replace=none
+
+    # Internationalization
+    spring.messages.basename=messages/messages
+
+    # Actuator / Management
+    management.endpoints.web.base-path=/manage
+    management.endpoints.web.exposure.include=*
+
+    # Logging
+    logging.level.org.springframework=info
+    logging.level.sql=debug
+    # logging.level.org.springframework.web=debug
+    # logging.level.org.springframework.context.annotation=trace
+
+    # Maximum time static resources should be cached
+    spring.web.resources.cache.cachecontrol.max-age=12h
+configMapDataYaml:
