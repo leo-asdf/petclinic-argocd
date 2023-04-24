@@ -18,6 +18,8 @@ spec:
       releaseName: petclinic-app
       valueFiles:
         - values.yaml
+        - values-deployment.yaml
+        - values-configmap.yaml
   destination:
     name: minikube
     namespace: default

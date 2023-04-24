@@ -56,13 +56,13 @@ volumes:
     hostPath:
       path: /logs
       type: Directory
-  - name: logback-spring-config
+  - name: petclinic
     configMap:
       name: petclinic-logback-spring-config
       items:
         - key: logback-spring.xml
           path: logback-spring.xml
-  - name: application-properties-config
+  - name: petclinic
     configMap:
       name: petclinic-application-propeties-config
       items:

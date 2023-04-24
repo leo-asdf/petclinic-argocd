@@ -1,6 +1,5 @@
-configMapCreate: true
+configMapDataCreate: true # true일때 configmap 생성
 configMapData:
-  JAVA_OPTIONS: "-Dlogging.config=/opt/devops/config/logback-spring.xml"
   logback-spring.xml: |-
     <configuration>
 
@@ -52,4 +51,9 @@ configMapData:
 
     # Maximum time static resources should be cached
     spring.web.resources.cache.cachecontrol.max-age=12h
-configMapDataYaml:
+
+configMapEnvCreate: true # true일때 configmap 생성
+configMapEnvData:
+  JAVA_OPTIONS: "-Dlogging.config=/opt/devops/config/logback-spring.xml"
+
+
