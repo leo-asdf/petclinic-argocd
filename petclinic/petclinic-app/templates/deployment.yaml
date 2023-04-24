@@ -32,13 +32,15 @@ spec:
           {{- end }}
           {{- if .Values.livenessProbe }}
           livenessProbe:
-            {{- $_ := set .Values "probeType" "livenessProbe" -}}
-            {{- include "probe" . | indent 12 }}
+            {{- with .Values.startupProbe }}
+            {{ toYaml . | nindent 12}}
+            {{- end }}
           {{- end }}
           {{- if .Values.readinessProbe }}
           readinessProbe:
-            {{- $_ := set .Values "probeType" "readinessProbe" -}}
-            {{- include "probe" . | indent 12 }}
+            {{- with .Values.startupProbe }}
+            {{ toYaml . | nindent 12}}
+            {{- end }}
           {{- end }}
           {{- if .Values.env }}
           env:
