@@ -59,5 +59,6 @@ spec:
       volumes:
         {{- range $k, $v := .Values.volumes}}
         - name {{ $k }}
-        {{- toYaml $v | nindent 8 }}
+          {{- toYaml $v | nindent 10 }}
+        {{- end}}
       terminationGracePeriodSeconds: 30
