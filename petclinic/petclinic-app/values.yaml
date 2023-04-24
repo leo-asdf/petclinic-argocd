@@ -12,6 +12,9 @@ rollingUpdate:
 containerPort: 8080
 healthPort: 8080
 
+env:
+  JAVA_OPTIONS: ""
+  
 envFrom:
   - configMapRef:
       name: petclinic-env-config
