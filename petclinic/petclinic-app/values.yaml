@@ -1,3 +1,4 @@
+# Required
 replicaCount: 2
 
 terminationGracePeriodSeconds: 30
@@ -12,9 +13,9 @@ rollingUpdate:
   maxUnavailable: 0
 
 containerPort: 8080
+# Required - End
 
-healthPath: /health
-
+# Optional
 startupProbe:
   httpGet:
     path: /health
@@ -37,8 +38,7 @@ readinessProbe:
   periodSeconds: 10
   failureThreshold: 2
 
-env:
-  JAVA_OPTIONS: ""
+env: []
 
 envFrom:
   - configMapRef:
@@ -70,3 +70,4 @@ volumes:
       items:
         - key: application.properties
           path: application.properties
+# Optional - End
