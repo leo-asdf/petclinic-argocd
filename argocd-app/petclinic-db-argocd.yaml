@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: petclinic-db
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    name: petclinic
+    chart: petclinic-db
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/leo-asdf/petclinic-argocd
+    targetRevision: main
+    path: petclinic/petclinic-db
+    helm:
+      releaseName: petclinic-db
+      valueFiles:
+        - values.yaml
+  destination:
+    name: minikube
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
