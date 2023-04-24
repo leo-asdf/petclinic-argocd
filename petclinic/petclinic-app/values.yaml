@@ -1,5 +1,7 @@
 replicaCount: 2
 
+terminationGracePeriodSeconds: 30
+
 image:
   repository: syl1709/petclinic
   tag: 3.0.1
@@ -14,7 +16,34 @@ healthPort: 8080
 
 env:
   JAVA_OPTIONS: ""
-  
+
 envFrom:
   - configMapRef:
       name: petclinic-env-config
+
+volumeMounts:
+  - name: app-logs
+    mountPath: /opt/devops/logs
+  - name: logback-spring-config
+    mountPath: /opt/devops/config/logback-spring.xml
+    subPath: logback-spring.xml
+  - name: application-properties-config
+    mountPath: /opt/devops/config/application.properties
+    subPath: application.properties
+volume:
+  - name: app-logs
+    hostPath:
+      path: /logs
+      type: Directory
+  - name: logback-spring-config
+    configMap:
+      name: petclinic-logback-spring-config
+      items:
+        - key: logback-spring.xml
+          path: logback-spring.xml
+  - name: application-properties-config
+    configMap:
+      name: petclinic-application-propeties-config
+      items:
+        - key: application.properties
+          path: application.properties
