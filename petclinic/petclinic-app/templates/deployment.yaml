@@ -55,9 +55,9 @@ spec:
           {{- end }}
           {{- if .Values.volumeMounts }}
           volumeMounts:
-            {{- include "volume" .Values | nindent 12}}
+            {{- include "volumeMounts" .Values | nindent 12}}
           {{- end }}
       {{- if .Values.volumes }}
       volumes:
-        {{- include "volumeMount" .Values | nindent 8}}
+        {{- include "volume" .Values | nindent 8}}
       {{- end }}
