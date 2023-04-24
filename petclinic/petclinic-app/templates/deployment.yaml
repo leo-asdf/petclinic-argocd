@@ -1,12 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: petclinic
+  name: {{ .Values.applicationName }}
+  namespace: {{ .Values.namespace }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: petclinic
+      app: {{ .Values.applicationName }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -15,13 +16,13 @@ spec:
   template:
     metadata:
       labels:
-        app: petclinic
+        app: {{ .Values.applicationName }}
     spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       containers:
-        - name: petclinic
-          image: syl1709/petclinic:3.0.1
-          imagePullPolicy: IfNotPresent
+        - name: {{ .Values.applicationName }}
+          image: {{ .Values.imageAccount }}/{{ .Values.applicationName }}:{{ .Values.deployImageTag }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - containerPort: {{ .Values.containerPort }}
           {{- if .Values.startupProbe }}
