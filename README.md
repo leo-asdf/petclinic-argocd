@@ -34,9 +34,9 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2
 ### ArgoCD Application
 argocd-app directory에서 아래의 command를 실행하여 ArgoCD application을 생성합니다.
 ```shell
-k apply -f nginx-ingress-controller.yaml
-k apply -f petclinic-app-argocd.yaml
-k apply -f petclinic-db-argocd.yaml
+kubectl apply -f nginx-ingress-controller.yaml
+kubectl apply -f petclinic-app-argocd.yaml
+kubectl apply -f petclinic-db-argocd.yaml
 ```
 초기 비밀번호를 얻습니다.
 ```
